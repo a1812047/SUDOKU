@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Sudoku</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="./stylesheets/style.css" type="text/css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="./javascripts/Myapp.js " defer></script>
+        <script src="https://kit.fontawesome.com/d0e8f615cc.js" crossorigin="anonymous"></script>
+        
+
+    </head>
+    
+    <body onload="Myapp.shuffleItems(); " >
+        <div id ="app"  >
+            <div v-if="solved" id = "congrats">
+                CONGRATULATIONS!!!
+            </div>
+            <div id = "start" v-if="started == false && end == false">
+                
+                <h1>SUDOKU</h1>
+                
+                <h4 style= "color:aliceblue"> Select a level</h4>
+                <div class = "middle">
+                    <button style="background-color: lightgreen;" @click = " construct_game(35); started = true; ">EASY</button>
+                    <button style="background-color: rgb(241, 241, 126);" @click = "  started = true; construct_game(33);">MEDIUM</button>
+                    <button style="background-color: rgb(228, 81, 81);" @click = " construct_game(30); started = true; ">HARD</button>
+                </div>
+            </div>
+            <!-- Sudoku grid and board to play -->
+            <div v-if="started == true && end == false"  >
+                <button @click = "solve(0,0)">SOLVE</button>
+                <fieldset class="container" id = "attempts" >
+                    <legend  style="color: rgb(211, 71, 71);">Wrong Attempts Remaining</legend>
+                    <span><strong style="color: red;" id = "MistakeInfo" >{{remaining_attempts}}</strong></span>
+                </fieldset>
+
+                <!-- The grid -->
+                <div id = "sudokuGrid" >
+                    <div v-for="(rows, index) in sudoku" class = "center" v-on:mouseenter="changerowIndex(index);" >
+                        <div v-for="(item,index) in rows" class="box out" v-bind:style="{fontWeight : item.fontWeight, fontSize:item.fontSize}" @click="changeItem(index); Erase(index);">{{item.value}}</div>
+                    </div>
+                </div>
+                
+                <!-- number pad  -->
+                <div class="middle">
+                    
+                    <div class="container" >
+                        <div id = "num1"> <div  v-for="(num,key) in num1" v-bind:class="{'num-box' : !num.isSelected, 'num-box-select': num.isSelected}" @click="clearAll(); num.isSelected = true; select(key)">{{key}}</div>
+                         </div>
+                        <div id = "num2"> <div v-for="(num,key) in num2" v-bind:class="{'num-box' : !num.isSelected, 'num-box-select': num.isSelected}"  @click="clearAll(); num.isSelected = true; select(key)">{{key}}</div></div>
+                         <div id = "num3"><div v-for="(num,key) in num3" v-bind:class="{'num-box' : !num.isSelected, 'num-box-select': num.isSelected}"  @click="clearAll(); num.isSelected = true; select(key)">{{key}}</div></div>
+                     </div>
+                     
+                     <div class = "container" style="color: aliceblue;" id = "clear" v-if="selected != 'None'" @click = "clearAll()">CLEAR</div>
+                     <aside class = "quicknote">*select a number from above to add it to the sudoku grid</aside>
+                     
+                         
+                   
+                     <fieldset class="container" >
+                         <legend style="color: rgb(216, 191, 191);">Pencil Mode</legend>
+                         <span class="description">when Pencil Mode is ON, you can edit</span>
+                         <i class="fa-solid fa-eraser" id = "rub" @click = "changeMode()" v-if="pencil_mode" style="color: white;"></i>
+                         <hr width="32px">
+         
+                         <i class="fa-solid fa-toggle-on fa-2x" id = "ON" @click="pencil_mode = false; eraser = false" v-if="pencil_mode"></i>
+                         
+                         <i class="fa-solid fa-toggle-off fa-2x" id = "OFF" @click="pencil_mode = true" style="color:grey" v-else></i>
+                     </fieldset>
+                            
+                     
+                    
+                     <fieldset class="container" v-if="remaining_hints > 0">
+                         <legend style="color: rgb(67, 172, 118);">Hints</legend>
+                         <span class="description">
+                             click on the bulb to solve a box.
+                         </span>
+                         <i class="fa-regular fa-lightbulb fa-2x" @click="hintSolve"></i>
+                         <span style="float:right">Remaining help: <strong>{{remaining_hints}}</strong></span>
+                         
+                     </fieldset>
+                     <button onclick="location.reload()" style="margin-top: 1rem; margin-left: 5.5rem;"> Restart </button>
+                </div>
+            </div>
+            <div v-if="end">
+                <div class="middle" id = "over" >GAME OVER</div>
+                <button onclick="location.reload()" style="margin-left: 40%;"> Restart </button>
+            </div>
+
+
+            
+        </div>
+        
+        <!-- number pad -->
+        
+       
+    </body>
+</html>
