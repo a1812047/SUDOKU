@@ -103,6 +103,7 @@ var Myapp = new Vue({
                         this.sudoku[row][col].fontWeight = "900";
                         this.sudoku[row][col].fontSize = "xxx-large";
                         this.count--;
+                        this.remaining_hints = min(this.remaining_hints, count);
                         if(this.count == 0){
                             this.solved = true;
                         }
@@ -238,6 +239,8 @@ var Myapp = new Vue({
                     this.sudoku[i][j].value = this.solved_sudoku[i][j];
                 }
             }
+            this.count = 0;
+            this.remaining_hints = 0;
         },
         hintSolve:function(){
             this.remaining_hints -= 1;
