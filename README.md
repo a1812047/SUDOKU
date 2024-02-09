@@ -3,7 +3,7 @@
 play the game at : https://a1812047.github.io/SUDOKU/
 
 
-The game above generates a new, random and unique board almost instantly. The process is explained below. There are  6,670,903,752,021,072,936,960 possible solvable sudoku. Do you think we will ever see the same sudoku again? (https://)
+The game above generates a new, random and unique board almost instantly. The process is explained below. There are  6,670,903,752,021,072,936,960 possible solvable sudoku. Do you think we will ever see the same sudoku again? 
 
 It is well known that we can solve the game of SUDOKU that comes on every Daily newspapers via backtracking algorithm and using some consistent hueristics that can fasten the process.Backtracking is a much slower process for us humans , but much faster for CPUs.
 
@@ -26,4 +26,4 @@ Note: So that we can create a random sudoku each time, we must shuffle the numbe
 
 Please play at the above link and try to come up with a solution? Average time to solve the puzzle is 20 minutes. 
 
-[https://pi.math.cornell.edu/~mec/Summer2009/Mahmood/Count.html#:~:text=They%20discovered%20that%20the%20number,approximately%206.671×1021.](https://)
+[Link to the resources](https://pi.math.cornell.edu/~mec/Summer2009/Mahmood/Home.html)
