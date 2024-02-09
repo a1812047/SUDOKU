@@ -9,13 +9,13 @@
         <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-        <script src="./javascripts/Myapp.js " defer></script>
+        <script type = "module" src="./javascripts/Myapp.mjs " defer></script>
         <script src="https://kit.fontawesome.com/d0e8f615cc.js" crossorigin="anonymous"></script>
         
 
     </head>
     
-    <body onload="Myapp.shuffleItems(); " >
+    <body >
         <div id ="app"  >
             <div v-if="solved" id = "congrats">
                 CONGRATULATIONS!!!
@@ -26,13 +26,14 @@
                 
                 <h4 style= "color:aliceblue"> Select a level</h4>
                 <div class = "middle">
-                    <button style="background-color: lightgreen;" @click = " construct_game(35); started = true; ">EASY</button>
-                    <button style="background-color: rgb(241, 241, 126);" @click = "  started = true; construct_game(33);">MEDIUM</button>
-                    <button style="background-color: rgb(228, 81, 81);" @click = " construct_game(30); started = true; ">HARD</button>
+                    <button style="background-color: lightgreen;" @click = " construct_game('easy'); started = true; ">EASY</button>
+                    <button style="background-color: rgb(241, 241, 126);" @click = "  started = true; construct_game('medium');">MEDIUM</button>
+                    <button style="background-color: rgb(228, 81, 81);" @click = " construct_game('hard'); started = true; ">HARD</button>
                 </div>
             </div>
             <!-- Sudoku grid and board to play -->
             <div v-if="started == true && end == false"  >
+                
                 <button @click = "solve(0,0)">SOLVE</button>
                 <fieldset class="container" id = "attempts" >
                     <legend  style="color: rgb(211, 71, 71);">Wrong Attempts Remaining</legend>
@@ -42,7 +43,7 @@
                 <!-- The grid -->
                 <div id = "sudokuGrid" >
                     <div v-for="(rows, index) in sudoku" class = "center" v-on:mouseenter="changerowIndex(index);" >
-                        <div v-for="(item,index) in rows" class="box out" v-bind:style="{fontWeight : item.fontWeight, fontSize:item.fontSize}" @click="changeItem(index); Erase(index);">{{item.value}}</div>
+                        <div v-for="(item,index) in rows" class="box out" v-bind:style="{fontWeight : item.fontWeight, fontSize:item.fontSize, borderLeftWidth:item.borderLeftWidth, borderRightWidth : item.borderRightWidth, borderTopWidth: item.borderTopWidth, borderBottomWidth: item.borderBottomWidth}" @click="changeItem(index); Erase(index);">{{item.value}}</div>
                     </div>
                 </div>
                 

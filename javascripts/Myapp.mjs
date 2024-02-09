@@ -1,10 +1,12 @@
 
 
 
+import { puzzle } from "./GeneratePuzzle.mjs";
 
 var Myapp = new Vue({
     el: "#app",
     data: {
+        
         started:false,
         end:false,
         numberMap:[],
@@ -12,27 +14,9 @@ var Myapp = new Vue({
         num1:{"1":{isSelected:false},"4":{isSelected:false},"7":{isSelected:false}},
         num2:{"2":{isSelected:false},"5":{isSelected:false},"8":{isSelected:false}},
         num3:{"3":{isSelected:false},"6":{isSelected:false},"9":{isSelected:false}},
-        sudoku:[
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}],
-        [{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},{value:".", fontWeight:200},
-        {value:".", fontWeight:200},{value:".", fontWeight:200}]
-        ],
-        solved_sudoku: [["5","3","4","6","7","8","9","1","2"],["6","7","2","1","9","5","3","4","8"],["1","9","8","3","4","2","5","6","7"],["8","5","9","7","6","1","4","2","3"],["4","2","6","8","5","3","7","9","1"],["7","1","3","9","2","4","8","5","6"],["9","6","1","5","3","7","2","8","4"],["2","8","7","4","1","9","6","3","5"],["3","4","5","2","8","6","1","7","9"]],
+        sudokuCell : {value:".", fontWeight:200,borderTopWidth:'0.1rem',borderBottomWidth:'0.1rem',borderLeftWidth:'0.1rem',borderRightWidth:'0.1rem'},
+        sudoku:[],
+        solved_sudoku: [],
         numbers:[
             {1:false},{2:false},{3:false},{4:false},{5:false},{6:false},{7:false},{8:false},{9:false}
         ],
@@ -44,7 +28,7 @@ var Myapp = new Vue({
         remaining_hints:3,
         remaining_attempts:3,
         eraser:false,
-        count: 81,
+        count: 0,
         
     },
     methods:{
@@ -66,9 +50,6 @@ var Myapp = new Vue({
                this.changeMode();
             }
         },
-        highlight:function(column_index){
-            
-        } ,
         changeItem:function(index){
             //alert(index);
             let row = this.rowIndex;
@@ -89,7 +70,7 @@ var Myapp = new Vue({
                     this.sudoku[row][index].value = this.selected;
                     
                     
-                    this.sudoku[row][col].fontSize = "xx-large";
+                    //this.sudoku[row][col].fontSize = "xx-large";
                     
                     if(this.selected != this.solved_sudoku[row][index]){
                         document.getElementById("MistakeInfo").style.fontSize = "xx-large";
@@ -100,10 +81,10 @@ var Myapp = new Vue({
                         },2000);
                         this.remaining_attempts -= 1;
                     }else{
-                        this.sudoku[row][col].fontWeight = "900";
-                        this.sudoku[row][col].fontSize = "xxx-large";
+                        // this.sudoku[row][col].fontWeight = "900";
+                        // this.sudoku[row][col].fontSize = "xxx-large";
                         this.count--;
-                        this.remaining_hints = min(this.remaining_hints, count);
+                        this.remaining_hints = Math.min(this.remaining_hints, this.count);
                         if(this.count == 0){
                             this.solved = true;
                         }
@@ -184,58 +165,69 @@ var Myapp = new Vue({
 
             
         },
-        updateHashMap: function(){
-            let n = 9;
-           var k=  randomInt(1,factorial(9));
-            var ans = generate_random_permutation(n,k);
+        prepare: function(){
+            const n  = 9;
+            for(let row = 0; row < n; row++){
+                let list = [];
+                for(let col = 0; col<n; col++){
+                    list.push(this.sudokuCell);
+                }
+                this.sudoku.push(JSON.parse(JSON.stringify(list)));
+            }
+            
+            for(let row = 0; row < n; row++){
+                for(let col = 0; col< n; col++){
+                    if(row == 2 || row == 5){
+                        this.sudoku[row][col].borderBottomWidth = '0.2rem'; 
+                    }
+                    if(row == 0){
+                        this.sudoku[row][col].borderTopWidth = '0.4rem';
+                    }else if(row == 8){
+                        this.sudoku[row][col].borderBottomWidth = '0.4rem';
+                    }
 
-            this.numberMap = ans; 
-           
+                    if(col == 0){
+                        this.sudoku[row][col].borderLeftWidth = '0.4rem';
+                    }else if(col == 8){
+                        this.sudoku[row][col].borderRightWidth = '0.4rem';
+                    }
+
+                    if(col == 2 || col == 5){
+                        this.sudoku[row][col].borderRightWidth = '0.2rem';
+                    }
+                }
+            }
+            
         },
-        shuffleItems: function(){
-            this.updateHashMap();
-          
-            for(i = 0;i < 9; i++){
-                for(j = 0; j < 9; j++){
-                    var num = this.solved_sudoku[i][j];
-                    num = Number(num) - 1;
-                    this.solved_sudoku[i][j] = String(this.numberMap[num]);
+        
+        construct_game: function(level){
+            
+            this.prepare();
+            
+           //create a random solution, save it in the solved_sudoku
+           //now try to create gaps. 
+            puzzle.generate_puzzle(level);
+            this.solved_sudoku = puzzle.solvedSudoku;
+            let sudoku = puzzle.unsolvedSudoku;
+            
+            for(let i  = 0; i < 9; i++){
+                for(let j = 0; j < 9; j++){
+                   
+                    
+                    if(sudoku[i][j] === 0){
+                        this.count += 1;
+                        continue;
+                    }
+                    this.sudoku[i][j].value = sudoku[i][j];
                 }
             }
-        },
-        construct_game: function( level_count){
-            let A = new Set();
-            let count = 0;
-            while(count != 8){
-                let row = randomInt(0,8);
-                let col = randomInt(0,8);
-                if(this.sudoku[row][col].value == "." && !A.has(this.solved_sudoku[row][col])){
-                    this.sudoku[row][col].value = this.solved_sudoku[row][col];
-                    this.sudoku[row][col].fontWeight = 900;
-                    this.sudoku[row][col].fontSize = "xxx-large";
-                    A.add(this.sudoku[row][col].value);
-                    count++;
-                }
-                
-            }
-            while(count < level_count){
-                let row = randomInt(0,8);
-                let col = randomInt(0,8);
-                if(this.sudoku[row][col].value == "."){
-                    this.sudoku[row][col].value = this.solved_sudoku[row][col];
-                    this.sudoku[row][col].fontWeight = 900;
-                    this.sudoku[row][col].fontSize = "xxx-large";
-                    count++;
-                }
-            }
-            count -= level_count;
-            setTimeout(setupGrid,10);
+            
             
         },
         // 
         solve: function(){
-            for(i = 0; i < 9; i++){
-                for(j = 0; j < 9; j++){
+            for(let i = 0; i < 9; i++){
+                for(let j = 0; j < 9; j++){
                     this.sudoku[i][j].value = this.solved_sudoku[i][j];
                 }
             }
@@ -263,46 +255,10 @@ var Myapp = new Vue({
 var randomInt = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
-var factorial = function(n){
-    if(n <= 1){
-        return 1;
-    }
 
-    return n* factorial(n-1);
-}
-var kthPermutation = function(question, ans, n,k){
-    if(k <= 1 || n <= 1){
-        for( i = 0; i <n; i++){
-            ans.push(question[i]);
-        }
-        return;
-    }
-    factorial_ = factorial(n-1);
-  
-    
-    a = Math.floor(k/factorial_);
-    
-    if(a*factorial_ == k){
-        a--;
-    }
-    ans.push(question[a]);
-    question.splice(a,1);
-    k -= a*factorial_;
-    n = n-1;
-    kthPermutation(question, ans, n, k);
-}
-var generate_random_permutation = function(n, k){
-    var question = [];
-    for(i = 1; i <= n; i++){
-        question.push(i);
-    }
-    var ans = [];
-    kthPermutation(question, ans, n, k);
-    return ans;
-}
 
-var setupGrid = function(){
-    var grid = document.getElementById("sudokuGrid").children;
+const setupGrid = function(){
+    const grid = document.getElementById("sudokuGrid").children;
     for(i = 0; i<grid.length; i++){
         grid[i].children[0].style.borderLeftWidth = "thick";
         grid[i].children[2].style.borderRightWidth = "thick";
